@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 app.use(express.json());
-const { models: { User }} = require('./db');
+const { models: { User, Note }} = require('./db');
 const path = require('path');
 
 app.use('/dist', express.static(path.join(__dirname, 'dist')));
@@ -17,7 +17,7 @@ app.post('/api/auth', async(req, res, next)=> {
   }
 });
 
-app.get('/api/auth', async(req, res, next)=> {
+app.get('/api/auth', async(req, res, next)=> {     // use this on other routes -- /notes -- we can only get notes with a token -- first get the notes
   try {
     res.send(await User.byToken(req.headers.authorization));
   }
@@ -35,6 +35,14 @@ app.get('/api/purchases', async(req, res, next)=> {
     next(ex);
   }
 });
+
+app.get('/api/notes', async(req, res, next) => {
+  try {
+    res.send(await Note.findAll())
+  } catch (err) {
+    next(err)
+  }
+})
 
 app.use((err, req, res, next)=> {
   console.log(err);
