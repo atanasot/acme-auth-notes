@@ -1,50 +1,52 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 app.use(express.json());
-const { models: { User, Note }} = require('./db');
-const path = require('path');
+const {
+  models: { User, Note },
+} = require("./db");
+const path = require("path");
 
-app.use('/dist', express.static(path.join(__dirname, 'dist')));
+app.use("/dist", express.static(path.join(__dirname, "dist")));
 
-app.get('/', (req, res)=> res.sendFile(path.join(__dirname, 'index.html')));
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
-app.post('/api/auth', async(req, res, next)=> {
+app.post("/api/auth", async (req, res, next) => {
   try {
-    res.send({ token: await User.authenticate(req.body)});
-  }
-  catch(ex){
+    res.send({ token: await User.authenticate(req.body) });
+  } catch (ex) {
     next(ex);
   }
 });
 
-app.get('/api/auth', async(req, res, next)=> {     // use this on other routes -- /notes -- we can only get notes with a token -- first get the notes
+app.get("/api/auth", async (req, res, next) => {
+  // use this on other routes -- /notes -- we can only get notes with a token -- first get the notes
   try {
     res.send(await User.byToken(req.headers.authorization));
-  }
-  catch(ex){
+  } catch (ex) {
     next(ex);
   }
 });
 
-app.get('/api/purchases', async(req, res, next)=> {
+app.get("/api/purchases", async (req, res, next) => {
   try {
     const user = await User.byToken(req.headers.authorization);
-    res.send('TODO Send the purchases for this user');
-  }
-  catch(ex){
+    res.send("TODO Send the purchases for this user");
+  } catch (ex) {
     next(ex);
   }
 });
 
-app.get('/api/notes', async(req, res, next) => {
+app.get("/api/notes", async (req, res, next) => {
   try {
-    res.send(await Note.findAll())
+    const user = await User.byToken(req.headers.authorization);
+    console.log(user);
+    res.send(await Note.findAll());
   } catch (err) {
-    next(err)
+    next(err);
   }
-})
+});
 
-app.use((err, req, res, next)=> {
+app.use((err, req, res, next) => {
   console.log(err);
   res.status(err.status || 500).send({ error: err.message });
 });

@@ -54,10 +54,24 @@ const attemptLogin = ()=> {
   }
 }
 
-const fetchNotes = () => {
-  return async(dispatch) => {
-    const notes = (await axios.get('/api/notes')).data
-    dispatch({type: LOAD_NOTES, notes})
+// const fetchNotes = () => {
+//   return async(dispatch) => {
+//     const notes = (await axios.get('/api/notes')).data
+//     dispatch({type: LOAD_NOTES, notes})
+//   }
+// }
+
+const fetchNotes = ()=> {
+  return async(dispatch)=> {
+    const token = window.localStorage.getItem('token');
+    if(token){
+      const response = await axios.get('/api/notes', {           
+        headers: {                          
+          authorization: token
+        }
+      });
+      dispatch({ type: LOAD_NOTES, notes: response.data });
+    }
   }
 }
 

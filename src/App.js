@@ -11,18 +11,24 @@ import SignIn from './SignIn';
 class App extends React.Component{
   componentDidMount(){
     this.props.attemptLogin();    // when app loads we attempt to login the user
-    this.props.fetchNotes()
+    //this.props.fetchNotes()
   }
 
   componentDidUpdate(prevProps) {   // this will tell us if user is logged in / we added this
     if (!prevProps.auth.id && this.props.auth.id) {
       console.log('user just logged in')
+  //     console.log(prevProps.auth)
+  //     console.log(this.props.auth)
+  //     this.setState({
+  //       username: this.props.auth.username,
+  //       notes: this.props.notes
+  //     })
     }
-  }
+   }
 
   render(){
     const { auth } = this.props;
-    console.log(auth);
+    //console.log(auth);
 
     if(!auth.id){
       return (
@@ -46,11 +52,12 @@ class App extends React.Component{
 
 const mapState = state => state;
 const mapDispatch = (dispatch)=> {
+  
   return {
     attemptLogin: ()=> {
       return dispatch(attemptLogin());
-    },
-    fetchNotes: () => dispatch(fetchNotes())
+    }
+    
   }
 }
 
