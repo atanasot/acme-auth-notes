@@ -37,6 +37,14 @@ app.get("/api/auth", async (req, res, next) => {
   }
 });
 
+app.post('/api/notes', async(req, res, next) => {
+  try {
+    res.status(201).send(await Note.create(req.body))
+  } catch (err) {
+    next(err)
+  }
+})
+
 app.get("/api/purchases", async (req, res, next) => {
   try {
     const user = await User.byToken(req.headers.authorization);

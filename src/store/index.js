@@ -5,6 +5,7 @@ import axios from 'axios';
 
 const LOAD_NOTES = 'LOAD_NOTES'
 const DELETE_NOTE = 'DELETE_NOTE'
+const CREATE_NOTE = 'CREATE_NOTE'
 
 const notes = (state = [], action)=> { 
    if (action.type === LOAD_NOTES) {
@@ -13,10 +14,13 @@ const notes = (state = [], action)=> {
    if (action.type === DELETE_NOTE) {
      return state.filter(note => note.id !== action.note.id)
    }
+   if (action.type === CREATE_NOTE) {
+     return [...state, action.newNote]
+   }
   return state;
 };
 
-const auth = (state = {}, action)=> {   // start wtih empty {}
+const auth = (state = {}, action)=> {   // start with empty {}
   if(action.type === 'SET_AUTH'){
     return action.auth;
   }
@@ -80,6 +84,13 @@ const deleteNote = (note) => {
   }
 }
 
+const createNote = (note) => {
+  return async(dispatch) => {
+    const response = await axios.post('/api/notes', note)
+    dispatch({type: CREATE_NOTE, newNote: response.data})
+  }
+}
+
 const store = createStore(
   combineReducers({
     auth,
@@ -88,6 +99,6 @@ const store = createStore(
   applyMiddleware(thunk, logger)
 );
 
-export { attemptLogin, signIn, logout, fetchNotes, deleteNote };
+export { attemptLogin, signIn, logout, fetchNotes, deleteNote, createNote };
 
 export default store;

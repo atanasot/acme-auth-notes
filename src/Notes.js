@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { deleteNote } from "./store"
+import CreateNote from './CreateNote'
 
 
 
@@ -45,6 +46,7 @@ const Notes = ({ auth, notes, deleteNote }) => {
             </li>
           ))}
         </ul>
+        <CreateNote />
       </div>
     </div>
   );
