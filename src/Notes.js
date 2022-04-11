@@ -1,76 +1,70 @@
 import React, {Component} from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { fetchNotes } from "./store";
+import { deleteNote } from "./store"
 
-// not getting the correct note to be associated with the user
-// before it was just notes, not userNotes
-class Notes extends Component {
-  componentDidMount() {
-    this.props.fetchNotes()
-  }
+
+
+// class Notes extends Component {
+//   componentDidMount() {
+//     this.props.fetchNotes()
+//   }
   
-  render () {
-    //console.log(this.props)
-    const user = this.props.user
-    const userNotes = this.props.userNotes
-    return (
-      <div>
-        <Link to="/home">Home</Link>
-        <div>
-          <h1>Notes for {user.username}</h1>
-          <ul>
-            {userNotes.map((note) => (
-              <li key={note.id}>{note.text}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    );
-  }
-};
-
-
-
-// const Notes = ({ user, userNotes }) => {
-//   // console.log(user)
-//   // console.log(userNotes)
-//   let token = window.localStorage.getItem("token");
-//   console.log(token);
-//   return (
-//     <div>
-//       <Link to="/home">Home</Link>
+//   render () {
+//     const user = this.props.user
+//     const userNotes = this.props.userNotes
+//     return (
 //       <div>
-//         <h1>Notes for {user.username}</h1>
-//         <ul>
-//           {userNotes.map((note) => (
-//             <li key={note.id}>{note.text}</li>
-//           ))}
-//         </ul>
+//         <Link to="/home">Home</Link>
+//         <div>
+//           <h1>Notes for {user.username}</h1>
+//           <ul>
+//             {userNotes.map((note) => (
+//               <li key={note.id}>{note.text}</li>
+//             ))}
+//           </ul>
+//         </div>
 //       </div>
-//     </div>
-//   );
+//     );
+//   }
 // };
+
+
+
+const Notes = ({ auth, notes, deleteNote }) => {
+  return (
+    <div>
+      <Link to="/home">Home</Link>
+      <div>
+        <h1>Notes for {auth.username}</h1>
+        <ul>
+          {notes.map((note) => (
+            <li key={note.id}>
+            {note.text}
+             <button onClick={()=> deleteNote(note)}>X</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
 
 // start with mapState to Props
 // componentDidUpdate() -- look at prevProps --thats how we know that somebody logged in
 
 const mapStateToProps = (state) => {
-  console.log(state)
-  const user = state.auth;
-  const userNotes = state.notes;
+  const {auth} = state
+  const {notes} = state
   return {
-    user,
-    userNotes,
+    auth,
+    notes,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
-  let token = window.localStorage.getItem("token");
-  console.log(token);
   return {
-    token,
-    fetchNotes: () => dispatch(fetchNotes())
+    deleteNote: (note) => dispatch(deleteNote(note))
   }
 }
 

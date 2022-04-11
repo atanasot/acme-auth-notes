@@ -4,10 +4,14 @@ import logger from 'redux-logger';
 import axios from 'axios';
 
 const LOAD_NOTES = 'LOAD_NOTES'
+const DELETE_NOTE = 'DELETE_NOTE'
 
 const notes = (state = [], action)=> { 
    if (action.type === LOAD_NOTES) {
      state = action.notes
+   }
+   if (action.type === DELETE_NOTE) {
+     return state.filter(note => note.id !== action.note.id)
    }
   return state;
 };
@@ -44,7 +48,7 @@ const attemptLogin = ()=> {
   return async(dispatch)=> {
     const token = window.localStorage.getItem('token');
     if(token){
-      const response = await axios.get('/api/auth', {            // we can send the token the same way for notes
+      const response = await axios.get('/api/auth', {           
         headers: {                          
           authorization: token
         }
@@ -54,12 +58,6 @@ const attemptLogin = ()=> {
   }
 }
 
-// const fetchNotes = () => {
-//   return async(dispatch) => {
-//     const notes = (await axios.get('/api/notes')).data
-//     dispatch({type: LOAD_NOTES, notes})
-//   }
-// }
 
 const fetchNotes = ()=> {
   return async(dispatch)=> {
@@ -75,6 +73,13 @@ const fetchNotes = ()=> {
   }
 }
 
+const deleteNote = (note) => {
+  return async (dispatch) => {
+    await axios.delete(`/api/notes/${note.id}`)
+    dispatch({type: DELETE_NOTE, note})
+  }
+}
+
 const store = createStore(
   combineReducers({
     auth,
@@ -83,6 +88,6 @@ const store = createStore(
   applyMiddleware(thunk, logger)
 );
 
-export { attemptLogin, signIn, logout, fetchNotes };
+export { attemptLogin, signIn, logout, fetchNotes, deleteNote };
 
 export default store;

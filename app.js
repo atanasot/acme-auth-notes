@@ -18,6 +18,16 @@ app.post("/api/auth", async (req, res, next) => {
   }
 });
 
+app.delete("/api/notes/:id", async (req, res, next) => {
+  try {
+    const note = await Note.findByPk(req.params.id);
+    await note.destroy();
+    res.sendStatus(204);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.get("/api/auth", async (req, res, next) => {
   // use this on other routes -- /notes -- we can only get notes with a token -- first get the notes
   try {
@@ -39,8 +49,13 @@ app.get("/api/purchases", async (req, res, next) => {
 app.get("/api/notes", async (req, res, next) => {
   try {
     const user = await User.byToken(req.headers.authorization);
-    console.log(user);
-    res.send(await Note.findAll());
+    res.send(
+      await Note.findAll({
+        where: {
+          userId: user.id,
+        },
+      })
+    );
   } catch (err) {
     next(err);
   }
